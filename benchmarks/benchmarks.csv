@@ -1,0 +1,9 @@
+unet name,lora used,Clip Name,vae_names,vae patch preset,vae load and decode execution in seconds,resolution dimensions,steps,seed,duration (length in seconds),backend triton enabled,mode,generation time,workflow execution time,sampling time,average seconds per it
+krea2_turbo_int8_convrot.safetensors,none,qwen3vl_4b_bf16.safetensors,qwen_image_vae.safetensors,node bypassed,257.675s,1024x1024,8,208,N/A,true,Text to Image,00-05-43,00-05-43,00-00-46,5.74
+krea2_turbo_int8_convrot.safetensors,none,qwen3vl_4b_bf16.safetensors,qwen_image_vae.safetensors,conservative,240.153s,1024x1024,8,208,N/A,true,Text to Image,00-05-27,00-05-27,00-00-46,5.74
+krea2_turbo_int8_convrot.safetensors,none,qwen3vl_4b_bf16.safetensors,qwen_image_vae.safetensors,balanced,216.396s,1024x1024,8,208,N/A,true,Text to Image,00-05-01,00-05-01,00-00-46,5.8
+krea2_turbo_int8_convrot.safetensors,none,qwen3vl_4b_bf16.safetensors,qwen_image_vae.safetensors,aggressive,208.415s,1024x1024,8,208,N/A,true,Text to Image,00-04-51,00-04-51,00-00-46,5.76
+krea2_turbo_int8_convrot.safetensors,none,qwen3vl_4b_bf16.safetensors,qwen_image_vae.safetensors,aggressive,179.447s,840x1256,8,208,N/A,true,Text to Image,00-03-40,00-03-40,00-00-35,4.42
+krea2_turbo_int8_convrot.safetensors,none,qwen3vl_4b_bf16.safetensors,qwen_image_vae.safetensors,node bypassed,222.573s,840x1256,8,208,N/A,true,Text to Image,00-04-23,00-04-23,00-00-35,4.4
+krea2_turbo_int8_convrot.safetensors,none,qwen3vl_4b_bf16.safetensors,qwen_image_vae.safetensors,conservative,201.960s,840x1256,8,208,N/A,true,Text to Image,00-04-02,00-04-02,00-00-35,4.42
+krea2_turbo_int8_convrot.safetensors,none,qwen3vl_4b_bf16.safetensors,qwen_image_vae.safetensors,balanced,179.776s,840x1256,8,208,N/A,true,Text to Image,00-03-40,00-03-40,00-00-35,4.43

@@ -1,0 +1,2 @@
+# Triton must be provided by the existing PyTorch/ROCm or CUDA ComfyUI environment.
+# Do not blindly replace a working ROCm Triton build with an arbitrary PyPI wheel.
