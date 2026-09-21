@@ -218,6 +218,28 @@ class W8A8CausalConv3d(CausalConv3d):
             self._logged_fallback.add(reason)
         return super().forward(x, cache_x=cache_x, cache_list=cache_list, cache_idx=cache_idx)
 
+    def _ensure_runtime_buffers_on(self, device: torch.device) -> None:
+        """Keep non-persistent W8A8 buffers colocated with the live activation tensor.
+
+        ComfyUI VAE encode/decode and model-offload paths can rematerialize the
+        decoder on the accelerator while object-patch buffers remain on CPU.
+        Lazily migrate only when a device mismatch is observed.
+        """
+        moved = []
+        if self.int8_weight.device != device:
+            self.int8_weight = self.int8_weight.to(device=device, non_blocking=True)
+            moved.append("int8_weight")
+        if self.weight_scale.device != device:
+            self.weight_scale = self.weight_scale.to(device=device, non_blocking=True)
+            moved.append("weight_scale")
+        if moved:
+            LOGGER.info(
+                "W8A8 runtime buffer migration [%s]: %s -> %s",
+                self.layer_name,
+                ", ".join(moved),
+                device,
+            )
+
     def forward(self, x, cache_x=None, cache_list=None, cache_idx=None):
         if not x.is_cuda:
             return self._fallback(x, cache_x, cache_list, cache_idx, "non-accelerator tensor")
@@ -299,9 +321,20 @@ class W8A8CausalConv3d(CausalConv3d):
         )
 
         c_out = self.out_channels
+
+        # Reference/image workflows can move the VAE between CPU and accelerator
+        # between encode and decode. The object-patched INT8 buffers are
+        # non-persistent and are not guaranteed to follow that transition.
+        self._ensure_runtime_buffers_on(x.device)
+
         activation_scale = (amax * self.activation_clip_ratio).clamp(min=1e-8) / 127.0
         scale_vec = self.weight_scale.float() * activation_scale
+
+        # Bias is a normal module parameter and is usually moved by ComfyUI, but
+        # make the Triton path robust to an offload/rematerialization mismatch.
         bias = self.bias
+        if bias is not None and bias.device != x.device:
+            bias = bias.to(device=x.device, non_blocking=True)
         t_out = t_in - 2
         m = t_out * hw
         out = torch.empty(m, c_out, device=x.device, dtype=x.dtype)

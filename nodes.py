@@ -14,7 +14,7 @@ from .selection import AGGRESSIVE_HARD_EXCLUDE_REGEX, LayerInfo, resolve_min_cha
 from .triton_w8a8 import W8A8CausalConv3d
 
 LOGGER = logging.getLogger("ComfyUI-Qwen-VAE-Triton")
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 
 
 def _eligible_qwen_decoder_layers(model) -> List[Tuple[str, CausalConv3d]]:

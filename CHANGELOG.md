@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.1 — Reference/image device-offload hotfix
+
+- Fixed W8A8 decoder failures in reference-to-image and other VAE encode/decode workflows where ComfyUI rematerializes the VAE on the accelerator but non-persistent W8A8 buffers remain on CPU.
+- `int8_weight` and `weight_scale` now lazily migrate to the live activation device when a mismatch is detected.
+- Added a defensive bias-device sync for the Triton execution path.
+- Preserved the v0.2.0 quantization math, presets, and validated Aggressive native-precision exclusions unchanged:
+  - `decoder.upsamples.14.residual.2`
+  - `decoder.upsamples.14.residual.6`
+- Native fallback behavior remains enabled for genuine kernel/runtime errors.
+
 ## 0.2.0 — Initial public release
 
 - Promoted the validated `0.2.0-rc2` runtime into the first public release.

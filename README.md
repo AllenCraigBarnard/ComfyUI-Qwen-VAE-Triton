@@ -5,7 +5,7 @@
 >
 > The primary use case is reducing the unusually expensive **first workflow run** and **runs immediately after changing image resolution**. Benchmark results are shown first below; Triton enablement and GPU environment-variable guidance are provided immediately after the example image.
 
-**Release:** `v0.2.0`
+**Release:** `v0.2.1`
 
 The release uses the validated mixed-precision Aggressive policy established during pre-release testing and exposes a deliberately minimal interface: **Preset + disable toggle only**.
 
@@ -121,7 +121,7 @@ For the ROCm7 Docker layout used during development, a release ZIP can be instal
 ```bash
 sudo rm -rf ~/ComfyUI-Docker/rocm7/storage-nodes/custom_nodes/ComfyUI-Qwen-VAE-Triton
 sudo mkdir -p ~/ComfyUI-Docker/rocm7/storage-nodes/custom_nodes/ComfyUI-Qwen-VAE-Triton
-sudo unzip -q ~/Downloads/ComfyUI-Qwen-VAE-Triton-v0.2.0.zip \
+sudo unzip -q ~/Downloads/ComfyUI-Qwen-VAE-Triton-v0.2.1.zip \
   -d ~/ComfyUI-Docker/rocm7/storage-nodes/custom_nodes/ComfyUI-Qwen-VAE-Triton
 sudo docker restart comfyui-rocm7
 ```
