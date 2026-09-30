@@ -8,7 +8,7 @@
 >
 > The primary use case is reducing the unusually expensive **first workflow run** and **runs immediately after changing image resolution**. Benchmark results are shown first below; ROCm/FlashAttention and AMD Triton installation guidance is provided in the installation section below.
 
-**Release:** `v0.2.2`
+**Release:** `v0.2.3`
 
 The release uses the validated mixed-precision Aggressive policy established during pre-release testing and exposes a deliberately minimal interface: **Preset + disable toggle only**.
 
@@ -125,7 +125,7 @@ For the ROCm7 Docker layout used during development, a release ZIP can be instal
 ```bash
 sudo rm -rf ~/ComfyUI-Docker/rocm7/storage-nodes/custom_nodes/ComfyUI-Qwen-VAE-Triton
 sudo mkdir -p ~/ComfyUI-Docker/rocm7/storage-nodes/custom_nodes/ComfyUI-Qwen-VAE-Triton
-sudo unzip -q ~/Downloads/ComfyUI-Qwen-VAE-Triton-v0.2.2.zip \
+sudo unzip -q ~/Downloads/ComfyUI-Qwen-VAE-Triton-v0.2.3.zip \
   -d ~/ComfyUI-Docker/rocm7/storage-nodes/custom_nodes/ComfyUI-Qwen-VAE-Triton
 sudo docker restart comfyui-rocm7
 ```

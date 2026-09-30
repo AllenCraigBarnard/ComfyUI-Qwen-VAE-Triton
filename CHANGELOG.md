@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.3 — Updated release workflows
+
+- Replaced the bundled Text-to-Image workflow with the newly supplied release workflow.
+- Replaced the bundled Style-Reference-to-Image workflow with the newly supplied release workflow.
+- Preserved the uploaded workflow JSON files byte-for-byte in the release package.
+- No W8A8 kernel, quantization math, preset-selection, or device-offload behavior changes relative to v0.2.2.
+- Preserves the validated Aggressive native-precision exclusions:
+  - `decoder.upsamples.14.residual.2`
+  - `decoder.upsamples.14.residual.6`
+
 ## 0.2.2 — Documentation and workflow release refresh
 
 - Updated the README with the project release video and the ROCm/FlashAttention + AMD Triton installation-guide handoff.
