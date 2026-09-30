@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.2 — Documentation and workflow release refresh
+
+- Updated the README with the project release video and the ROCm/FlashAttention + AMD Triton installation-guide handoff.
+- Updated the documented example-workflow paths to the current Text-to-Image and Style-Reference-to-Image workflow files.
+- Ships the project's current updated workflow JSON files unchanged from the supplied release state.
+- Removed the stale generated `node.zip` from the source tree so it is not nested into a future Registry package.
+- Added `.comfyignore` release-packaging hygiene for generated ZIP/bytecode artifacts.
+- No W8A8 kernel, quantization math, preset-selection, or device-offload behavior changes relative to v0.2.1.
+- Preserves the validated Aggressive native-precision exclusions:
+  - `decoder.upsamples.14.residual.2`
+  - `decoder.upsamples.14.residual.6`
+
 ## 0.2.1 — Reference/image device-offload hotfix
 
 - Fixed W8A8 decoder failures in reference-to-image and other VAE encode/decode workflows where ComfyUI rematerializes the VAE on the accelerator but non-persistent W8A8 buffers remain on CPU.

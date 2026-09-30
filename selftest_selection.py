@@ -37,7 +37,7 @@ def main() -> None:
     assert "decoder.upsamples.13.residual.6" in aggressive
 
     assert AGGRESSIVE_HARD_EXCLUDE_REGEX == r"^decoder\.upsamples\.14\.residual\.(2|6)$"
-    print("v0.2.1 selection policy self-test: PASS")
+    print("v0.2.2 selection policy self-test: PASS")
 
 
 if __name__ == "__main__":

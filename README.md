@@ -1,11 +1,14 @@
 # ComfyUI-Qwen-VAE-Triton
 
-> [!IMPORTANT]
-> **Triton must be available and enabled for this node.** This project accelerates selected Qwen-Image/Wan VAE decoder `CausalConv3d` layers with custom Triton W8A8 implicit-GEMM kernels. GPU-specific environment tuning can materially affect performance, so configure your environment for your actual GPU rather than blindly copying another architecture's settings.
->
-> The primary use case is reducing the unusually expensive **first workflow run** and **runs immediately after changing image resolution**. Benchmark results are shown first below; Triton enablement and GPU environment-variable guidance are provided immediately after the example image.
+> [!TIP]
+> **Project release video:** [Watch the release video on YouTube](https://youtu.be/fD-J2CYetIg)
 
-**Release:** `v0.2.1`
+> [!IMPORTANT]
+> **AMD Triton must be installed and available for this node.** This project accelerates selected Qwen-Image/Wan VAE decoder `CausalConv3d` layers with custom Triton W8A8 implicit-GEMM kernels. GPU-specific environment tuning can materially affect performance, so configure your environment for your actual GPU rather than blindly copying another architecture's settings.
+>
+> The primary use case is reducing the unusually expensive **first workflow run** and **runs immediately after changing image resolution**. Benchmark results are shown first below; ROCm/FlashAttention and AMD Triton installation guidance is provided in the installation section below.
+
+**Release:** `v0.2.2`
 
 The release uses the validated mixed-precision Aggressive policy established during pre-release testing and exposes a deliberately minimal interface: **Preset + disable toggle only**.
 
@@ -79,15 +82,16 @@ These are measured results from the supplied benchmark workflow, not a guarantee
 
 ![Example outputs](assets/examples.png)
 
-### Example workflow
+### Example workflows
 
-An importable ComfyUI workflow is included at:
+Two importable ComfyUI workflows are included:
 
 ```text
-workflows/example_workflow.json
+workflows/text_2_image_example_workflow.json
+workflows/style_reference_2_image_example_workflow.json
 ```
 
-Drag the JSON file into ComfyUI or use **Workflow → Open**. The workflow demonstrates the node connected between the normal VAE loader and `VAEDecode`, with the Aggressive preset selected. Model filenames and optional third-party nodes in the example may need to be adjusted for your installation.
+Drag either JSON file into ComfyUI or use **Workflow → Open**. These are the current project workflows supplied with this release. Model filenames and optional third-party nodes may need to be adjusted for your installation.
 
 ---
 
@@ -121,101 +125,16 @@ For the ROCm7 Docker layout used during development, a release ZIP can be instal
 ```bash
 sudo rm -rf ~/ComfyUI-Docker/rocm7/storage-nodes/custom_nodes/ComfyUI-Qwen-VAE-Triton
 sudo mkdir -p ~/ComfyUI-Docker/rocm7/storage-nodes/custom_nodes/ComfyUI-Qwen-VAE-Triton
-sudo unzip -q ~/Downloads/ComfyUI-Qwen-VAE-Triton-v0.2.1.zip \
+sudo unzip -q ~/Downloads/ComfyUI-Qwen-VAE-Triton-v0.2.2.zip \
   -d ~/ComfyUI-Docker/rocm7/storage-nodes/custom_nodes/ComfyUI-Qwen-VAE-Triton
 sudo docker restart comfyui-rocm7
 ```
 
-### 2. Enable Triton in ComfyUI
+### Install  ROCm\FlashAttention and AMD Triton
 
-Start ComfyUI with:
+Follow the instructions in this markdown file [https://huggingface.co/PuppetVision/krea-2-amd-rocm-optimized-comfy-triton/docs/ROCM_FLASH_ATTENTION_INSTALLATION_PROMPT.md](https://huggingface.co/PuppetVision/krea-2-amd-rocm-optimized-comfy-triton/docs/ROCM_FLASH_ATTENTION_INSTALLATION_PROMPT.md).
 
-```text
---enable-triton-backend
-```
-
-For example:
-
-```bash
-python main.py --listen 0.0.0.0 --port 8188 --enable-triton-backend
-```
-
-If your Docker setup passes ComfyUI arguments through an environment variable, include the same flag in that variable, for example:
-
-```dotenv
-CLI_ARGS=--enable-triton-backend
-```
-
-A healthy startup should show Triton being detected/enabled. You can also verify the runtime from inside the ComfyUI environment:
-
-```bash
-python - <<'PYVERIFY'
-import torch
-import triton
-
-print("PyTorch:", torch.__version__)
-print("ROCm/HIP:", torch.version.hip)
-print("Triton:", triton.__version__)
-print("GPU:", torch.cuda.get_device_name(0))
-PYVERIFY
-```
-
-> Do not blindly replace a ROCm environment's working Triton build with an arbitrary PyPI wheel. Use the Triton build appropriate to your PyTorch/ROCm stack.
-
-### 3. Investigate environment variables for your GPU
-
-GPU tuning is architecture-specific. Before copying tuning values:
-
-1. Identify the actual GPU architecture reported by ROCm/PyTorch.
-2. Check the ROCm documentation for that architecture and ROCm release.
-3. Check PyTorch ROCm allocator/TunableOp guidance for your installed PyTorch version.
-4. Change one group of settings at a time and benchmark the same workflow before and after.
-5. Remove settings that do not measurably help or that destabilize other workloads.
-
-Useful identification commands include:
-
-```bash
-rocminfo | grep -m1 -E 'Name:.*gfx'
-```
-
-and:
-
-```bash
-python - <<'PYGPU'
-import torch
-print(torch.cuda.get_device_name(0))
-print("HIP:", torch.version.hip)
-PYGPU
-```
-
-### Strix Halo working example
-
-The following is a **working example for the tested Strix Halo / gfx1151 environment**. It is not a universal AMD configuration:
-
-```dotenv
-HSA_OVERRIDE_GFX_VERSION=11.5.1
-HIP_VISIBLE_DEVICES=0
-PYTORCH_TUNABLEOP_ENABLED=1
-PYTORCH_TUNABLEOP_TUNING=1
-PYTORCH_TUNABLEOP_VERBOSE=1
-PYTORCH_ALLOC_CONF=expandable_segments:True,garbage_collection_threshold:0.9,max_split_size_mb:512
-```
-
-If using Docker Compose, pass the variables into the ComfyUI service from your `.env` file rather than hard-coding them into the image. Example:
-
-```yaml
-environment:
-  HSA_OVERRIDE_GFX_VERSION: ${HSA_OVERRIDE_GFX_VERSION}
-  HIP_VISIBLE_DEVICES: ${HIP_VISIBLE_DEVICES}
-  PYTORCH_TUNABLEOP_ENABLED: ${PYTORCH_TUNABLEOP_ENABLED}
-  PYTORCH_TUNABLEOP_TUNING: ${PYTORCH_TUNABLEOP_TUNING}
-  PYTORCH_TUNABLEOP_VERBOSE: ${PYTORCH_TUNABLEOP_VERBOSE}
-  PYTORCH_ALLOC_CONF: ${PYTORCH_ALLOC_CONF}
-```
-
-`HSA_OVERRIDE_GFX_VERSION` is particularly architecture-specific. Do not copy `11.5.1` to an unrelated GPU simply because it appears in this README.
-
-### 4. Workflow integration
+### Workflow integration
 
 Use the node between the normal VAE loader and decoder:
 

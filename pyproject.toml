@@ -1,6 +1,6 @@
 [project]
 name = "qwen-vae-triton"
-version = "0.2.1"
+version = "0.2.2"
 description = "Quality-focused Triton W8A8 implicit-GEMM Conv3D acceleration for the Qwen-Image/Wan VAE in ComfyUI, optimized for faster first workflow runs and resolution changes. PuppetVisionAI: https://www.youtube.com/@PuppetVisionAI | LinkedIn: https://www.linkedin.com/in/allen-b-3a35505a/ | Website: https://puppetvision.nl"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -1,0 +1,5 @@
+# Generated/local artifacts that must not be included in the Comfy Registry package.
+__pycache__/
+*.py[cod]
+node.zip
+*.zip
